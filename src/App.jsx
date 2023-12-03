@@ -28,9 +28,9 @@ function App() {
     <Layout/>
     <Routes>
         <Route index element={<Dashboard/>} />
-        <Route path="incomes" element={<IncomeLists/>} />
-        <Route path="expenditures" element={<ExpensesList/>} />
-        <Route path="loans" element={<Loans/>} />
+        <Route path="/incomes" element={<IncomeLists/>} />
+        <Route path="/expenditures" element={<ExpensesList/>} />
+        <Route path="/loans" element={<Loans/>} />
         {/* <Route path="*" element={<NoPage />} /> */}
     </Routes>
     </div>
