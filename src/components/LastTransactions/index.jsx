@@ -1,4 +1,4 @@
-import expenseCategories from "../../constant/ExpenseCategories"
+import expenseCategories from "../../constant/expenseCategories"
 
 const LastTransactions = () => {
   return (
