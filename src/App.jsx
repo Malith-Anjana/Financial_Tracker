@@ -27,7 +27,7 @@ function App() {
     <div className='dark:bg-black h-[100%]'>
     <Layout/>
     <Routes>
-        <Route index element={<Dashboard/>} />
+        <Route path="/" exact element={<Dashboard/>} />
         <Route path="/incomes" element={<IncomeLists/>} />
         <Route path="/expenditures" element={<ExpensesList/>} />
         <Route path="/loans" element={<Loans/>} />
