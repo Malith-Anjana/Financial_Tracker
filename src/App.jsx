@@ -8,17 +8,20 @@ import TransactionChart from './components/TransactionChart'
 import FinanceLineChart from './components/LineChart'
 import FloatingButton from './components/FloatingButton'
 import Month from './Month'
-import AddTransaction from './components/Add'
+import AddTransaction from './components/AddIncome'
 import Dashboard from './pages/Dashboard'
+import AddIncome from './components/AddIncome'
+import IncomeLists from './pages/IncomeLists'
 
 function App() {
   return (
-    <div className='dark:bg-black'>
+    <div className='dark:bg-black h-[100vh]'>
     <FloatingButton/>
-    <AddTransaction/>
+    <AddIncome/>
 
       <Sidebar/>
-<Dashboard/>
+{/* <Dashboard/> */}
+<IncomeLists/>
     </div>
   )
 }

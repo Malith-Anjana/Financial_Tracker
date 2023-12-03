@@ -47,8 +47,8 @@ const MonthCalendar = () => {
     setSelectedYear(e.target.value);
   };
 
-    const inActive = "w-full sm:w-auto bg-gray-500 dark:bg-gray-800  hover:bg-gray-700  dark:hover:bg-gray-500  text-white  focus:ring-4 focus:outline-none focus:ring-gray-30 dark:focus:ring-gray-700 rounded-md inline-flex items-center justify-center px-4 py-2.5"
-    const active = "w-full sm:w-auto bg-gray-800 dark:bg-gray-600  hover:bg-gray-700  dark:hover:bg-gray-500  text-white  focus:ring-4 focus:outline-none focus:ring-gray-30 dark:focus:ring-gray-700 rounded-md inline-flex items-center justify-center px-4 py-2.5"
+    const inActive = "w-full sm:w-auto bg-gray-500 dark:bg-gray-800  hover:bg-primary-100 text-white  focus:ring-4 focus:outline-none focus:ring-gray-30 dark:focus:ring-gray-700 rounded-md inline-flex items-center justify-center px-4 py-2.5"
+    const active = "w-full sm:w-auto bg-primary-100 hover:bg-primary-100 text-white  focus:ring-4 focus:outline-none focus:ring-gray-30 dark:focus:ring-gray-700 rounded-md inline-flex items-center justify-center px-4 py-2.5"
 
 
   return (
@@ -87,7 +87,7 @@ const MonthCalendar = () => {
         ))}
       </div>
             <div className="mt-3">
-      <a onClick={()=> {getCurrentMonth(); getCurrentYear();}} className="hover:text-blue-700 hover:dark:text-blue-700 font-bold text-gray-900 cursor-pointer dark:text-gray-400">
+      <a onClick={()=> {getCurrentMonth(); getCurrentYear();}} className="hover:text-primary-100 hover:underline font-bold text-gray-900 cursor-pointer dark:text-gray-400">
         Today
       </a>
 

@@ -19,6 +19,9 @@ export default {
       },
       inGreen:{
         500: '#04d15b'
+      },
+      primary:{
+        100: '#E11D48'
       }
     }
   }
