@@ -9,13 +9,25 @@ import IncomeLists from './pages/IncomeLists'
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import ExpensesList from './pages/ExpensesList'
 import Loans from './pages/Loans'
+import { useState } from 'react'
 
 function App() {
+  const [isModalOpen, setModalOpen] = useState(false);
+
+  const openModal = () => {
+    setModalOpen(true);
+  };
+
+  const closeModal = () => {
+    setModalOpen(false);
+  };
+
+
   const Layout =()=> {
     return(
       <>
-    <FloatingButton/>
-    <AddIncome/>
+    <AddIncome isOpen={isModalOpen} onClose={closeModal}/>
+    <FloatingButton openModal={openModal}/>
     <Sidebar/>
       </>
     )

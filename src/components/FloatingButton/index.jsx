@@ -1,4 +1,4 @@
-const FloatingButton = () => {
+const FloatingButton = ({openModal}) => {
   return (
     <div className="group fixed bottom-0 right-0 p-2 z-50 flex items-end justify-end w-20 h-20 ">
       <button
@@ -6,6 +6,7 @@ const FloatingButton = () => {
         data-modal-toggle="crud-modal"
         className="block text-white dark:text-gray-950 bg-gray-950 dark:bg-white  hover:bg-primary-100 hover:dark:bg-primary-100  focus:ring-4 focus:outline-none text-sm px-4 py-4 text-center shadow-xl items-center justify-center rounded-full bg-gradient-to-r z-50 absolute"
         type="button"
+        onClick={openModal}
       >
         <svg
           xmlns="http://www.w3.org/2000/svg"
