@@ -7,28 +7,32 @@ import { SiMoneygram } from "react-icons/si";
 const Sidebar = () => {
     const [mode, setMode] = useState(false)
     const sidebarRef = useRef(null);
+    const hamBtnRef = useRef(null);
     const [isSidebarOpen, setSidebarOpen] = useState(false);
   
     const handleToggleSidebar = () => {
        setSidebarOpen(!isSidebarOpen);
-       console.log(isSidebarOpen);
     };
-
-    const handleClickOutside = (event) => {
-      const sidebar = sidebarRef.current;
-  
-      if (!sidebar && sidebar.contains(event.target)) {
-        setSidebarOpen(false);
-      }
-    };
-
+    
     useEffect(() => {
+      const handleClickOutside = (event) => {
+        // Check if the clicked element is outside the div
+        if ((sidebarRef.current && !sidebarRef.current.contains(event.target)) && (hamBtnRef.current && !hamBtnRef.current.contains(event.target)) ) {
+          console.log('Clicked outside the div!');
+          setSidebarOpen(false);
+        }
+      };
+  
+      // Add the event listener when the component mounts
       document.addEventListener('click', handleClickOutside);
+  
+      // Remove the event listener when the component unmounts
       return () => {
         document.removeEventListener('click', handleClickOutside);
       };
-    }, []); // Empty dependency array ensures the effect runs only once on mount
+    }, []); // Empty dependency array to run the effect only once on mount
   
+
 
     useEffect(() => {
       modeChange();
@@ -43,7 +47,7 @@ const Sidebar = () => {
        }
      }
   return (
-    <><button onClick={handleToggleSidebar} data-drawer-target="default-sidebar" data-drawer-toggle="default-sidebar" aria-controls="default-sidebar" type="button" className="inline-flex items-center p-2 mt-2 ms-3 text-sm text-gray-500 rounded-lg sm:hidden hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200 dark:text-gray-400 dark:hover:bg-gray-700 dark:focus:ring-gray-600">
+    <><button ref={hamBtnRef} onClick={handleToggleSidebar} data-drawer-target="default-sidebar" data-drawer-toggle="default-sidebar" aria-controls="default-sidebar" type="button" className="inline-flex items-center p-2 mt-2 ms-3 text-sm text-gray-500 rounded-lg sm:hidden hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200 dark:text-gray-400 dark:hover:bg-gray-700 dark:focus:ring-gray-600">
     <span className="sr-only">Open sidebar</span>
     <svg className="w-6 h-6" aria-hidden="true" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
     <path clipRule="evenodd" fillRule="evenodd" d="M2 4.75A.75.75 0 012.75 4h14.5a.75.75 0 010 1.5H2.75A.75.75 0 012 4.75zm0 10.5a.75.75 0 01.75-.75h7.5a.75.75 0 010 1.5h-7.5a.75.75 0 01-.75-.75zM2 10a.75.75 0 01.75-.75h14.5a.75.75 0 010 1.5H2.75A.75.75 0 012 10z"></path>
