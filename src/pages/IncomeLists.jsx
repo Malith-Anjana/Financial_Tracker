@@ -1,10 +1,17 @@
 import React from 'react'
+import IncomeCard from '../components/Card/IncomeCard'
 
 const IncomeLists = () => {
   return (
     <div className="p-4 sm:ml-64">
     <div className="p-4 border-2 border-gray-200 border-dashed rounded-lg">
       
+    <div className="grid grid-cols-1 lg:grid-cols-4 md:grid-cols-3 gap-5 mb-4">
+             
+             <IncomeCard/>
+    
+       </div>
+
     <div class="mx-auto max-w-screen-xl">
 
         <div class="bg-gray-50 dark:bg-gray-950 relative shadow-md sm:rounded-lg overflow-hidden">

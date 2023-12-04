@@ -36,7 +36,7 @@ function App() {
   return (
 
     <BrowserRouter>
-    <div className='dark:bg-black h-[100%]'>
+    <div className='dark:bg-black h-auto'>
     <Layout/>
     <Routes>
         <Route path="/" exact element={<Dashboard/>} />
