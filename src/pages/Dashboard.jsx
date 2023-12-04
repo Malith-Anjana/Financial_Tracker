@@ -13,7 +13,7 @@ const Dashboard = () => {
          
           <div className="grid grid-cols-1 lg:grid-cols-4 md:grid-cols-2  gap-6 mb-4">
              
-                <Card/>
+                {/* <Card/> */}
        
           </div>
     
