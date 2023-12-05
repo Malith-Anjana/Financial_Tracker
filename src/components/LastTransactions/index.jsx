@@ -1,5 +1,5 @@
 import expenseCategories from "../../constant/expenseCategories"
-
+import React from "react";
 const LastTransactions = () => {
   return (
    <>

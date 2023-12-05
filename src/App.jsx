@@ -9,7 +9,7 @@ import IncomeLists from './pages/IncomeLists'
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import ExpensesList from './pages/ExpensesList'
 import Loans from './pages/Loans'
-import { useState } from 'react'
+import React, { useState } from 'react'
 import Login from './pages/Login'
 
 function App() {

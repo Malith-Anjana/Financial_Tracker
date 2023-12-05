@@ -1,3 +1,5 @@
+import React from "react";
+
 const FloatingButton = ({openModal}) => {
   return (
     <div className="group fixed bottom-0 right-0 p-2 z-50 flex items-end justify-end w-20 h-20 ">
@@ -14,7 +16,7 @@ const FloatingButton = ({openModal}) => {
           viewBox="0 0 24 24"
           stroke-width="1.5"
           stroke="currentColor"
-          class="w-5 h-5 group-hover:rotate-90 transition  transition-all duration-[0.6s]"
+          className="w-5 h-5 group-hover:rotate-90 transition  transition-all duration-[0.6s]"
         >
           <path
             stroke-linecap="round"

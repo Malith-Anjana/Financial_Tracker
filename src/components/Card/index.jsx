@@ -1,5 +1,5 @@
 import { CustomIcon} from "../../assets/icons/Icons";
-
+import React from "react";
 const Card = () => {
     
   function BoxWrapper({ children }) {

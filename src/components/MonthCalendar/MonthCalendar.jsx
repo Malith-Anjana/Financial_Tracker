@@ -52,7 +52,7 @@ const MonthCalendar = () => {
 
 
   return (
-    <div class="w-full p-4 mt-4 text-center border border-gray-200 rounded-lg dark:border-gray-700">
+    <div className="w-full p-4 mt-4 text-center border border-gray-200 rounded-lg dark:border-gray-700">
       <select
         id="underline_select"
         onChange={handleYearChange}
@@ -70,7 +70,7 @@ const MonthCalendar = () => {
         ))}
       </select>
 
-      <div class="grid grid-cols-2 md:grid-cols-3 gap-2.5">
+      <div className="grid grid-cols-2 md:grid-cols-3 gap-2.5">
         {months.map((mnth, index) => (
           <a
             onClick={() => setCurrentMonth(mnth)}
@@ -78,8 +78,8 @@ const MonthCalendar = () => {
             href="#"
             className={mnth === currentMonth ? active : inActive}
           >
-            <div class="text-left rtl:text-right">
-              <div class="-mt-1 font-sans text-sm font-semibold">
+            <div className="text-left rtl:text-right">
+              <div className="-mt-1 font-sans text-sm font-semibold">
                 {mnth.substring(0, 3)}
               </div>
             </div>
