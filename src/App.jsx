@@ -10,9 +10,14 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import ExpensesList from './pages/ExpensesList'
 import Loans from './pages/Loans'
 import { useState } from 'react'
+import Login from './pages/Login'
 
 function App() {
   const [isModalOpen, setModalOpen] = useState(false);
+
+
+  // You can add more conditions based on your routes
+  const isBasicLayoutVisible = !location.pathname.startsWith('/login');
 
   const openModal = () => {
     setModalOpen(true);
@@ -37,12 +42,13 @@ function App() {
 
     <BrowserRouter>
     <div className='dark:bg-black h-auto'>
-    <Layout/>
+    {isBasicLayoutVisible && <Layout/>}
     <Routes>
         <Route path="/" exact element={<Dashboard/>} />
         <Route path="/incomes" element={<IncomeLists/>} />
         <Route path="/expenditures" element={<ExpensesList/>} />
         <Route path="/loans" element={<Loans/>} />
+        <Route path="/login" element={<Login/>} />
         {/* <Route path="*" element={<NoPage />} /> */}
     </Routes>
     </div>
