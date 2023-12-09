@@ -9,7 +9,9 @@ const MonthCalendar = () => {
   const [months, setMonths] = useState([]);
   const [currentMonth, setCurrentMonth] = useState("");
 
-  const {dispatch} = useContext(DateFilterContext)
+  const {dispatch} = useContext(DateFilterContext);
+  const { date } = useContext(DateFilterContext);
+
   const monthNames = [
     "January",
     "February",
@@ -28,11 +30,12 @@ const MonthCalendar = () => {
   useEffect(() => {
     getCurrentMonth();
     getCurrentYear();
+   
   }, []); // Run only once on component mount
 
   useEffect(() => {
     const monthIndex = monthNames.findIndex(month => month.toLowerCase() === currentMonth.toLowerCase());
-    const setDate = {'year': selectedYear, 'month':monthIndex +1}
+    const setDate = {'year': selectedYear, 'month':monthIndex +1, 'mName':currentMonth }
     dispatch({type:"SETDATE", payload:setDate});
   }, [selectedYear, currentMonth])
 
@@ -84,7 +87,7 @@ const MonthCalendar = () => {
             onClick={() => setCurrentMonth(mnth)}
             key={index}
             href="#"
-            className={mnth === currentMonth ? active : inActive}
+            className={mnth === date.mName ? active : inActive}
           >
             <div className="text-left rtl:text-right">
               <div className="-mt-1 font-sans text-sm font-semibold">
@@ -96,7 +99,7 @@ const MonthCalendar = () => {
       </div>
             <div className="mt-3">
       <a onClick={()=> {getCurrentMonth(); getCurrentYear();}} className="hover:text-primary-100 hover:underline font-bold text-gray-900 cursor-pointer dark:text-gray-400">
-        Today
+        This Month
       </a>
 
             </div>
