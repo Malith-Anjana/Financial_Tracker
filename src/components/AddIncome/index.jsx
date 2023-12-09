@@ -174,7 +174,7 @@ const AddIncome = ({ isOpen, onClose }) => {
                     </label>
                     <input
                       required
-                      min={0.01}
+                      min="1" step="any"
                       datepicker
                       onChange={(e) => setAmount((Math.round(parseFloat(e.target.value) * 100) / 100).toFixed(2))}
                       type="number"

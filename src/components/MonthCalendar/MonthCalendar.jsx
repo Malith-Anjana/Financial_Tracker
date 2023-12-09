@@ -1,6 +1,7 @@
-import React from "react";
+import React, { useContext } from "react";
 import { useEffect } from "react";
 import { useState } from "react";
+import { DateFilterContext } from "../../context/DateFilterContext";
 
 const MonthCalendar = () => {
   const [years, setYears] = useState([]);
@@ -8,32 +9,39 @@ const MonthCalendar = () => {
   const [months, setMonths] = useState([]);
   const [currentMonth, setCurrentMonth] = useState("");
 
+  const {dispatch} = useContext(DateFilterContext)
+  const monthNames = [
+    "January",
+    "February",
+    "March",
+    "April",
+    "May",
+    "June",
+    "July",
+    "August",
+    "September",
+    "October",
+    "November",
+    "December",
+  ];
+
   useEffect(() => {
     getCurrentMonth();
     getCurrentYear();
   }, []); // Run only once on component mount
 
-  const getCurrentYear = () => {
-    const monthNames = [
-      "January",
-      "February",
-      "March",
-      "April",
-      "May",
-      "June",
-      "July",
-      "August",
-      "September",
-      "October",
-      "November",
-      "December",
-    ];
+  useEffect(() => {
+    const monthIndex = monthNames.findIndex(month => month.toLowerCase() === currentMonth.toLowerCase());
+    const setDate = {'year': selectedYear, 'month':monthIndex +1}
+    dispatch({type:"SETDATE", payload:setDate});
+  }, [selectedYear, currentMonth])
 
+
+  const getCurrentYear = () => {
     const currentMonthIndex = new Date().getMonth();
     setCurrentMonth(monthNames[currentMonthIndex]);
 
     setMonths(monthNames);
-    console.log(currentMonth);
   };
 
   const getCurrentMonth = () => {
