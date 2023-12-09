@@ -21,7 +21,7 @@ const Dashboard = () => {
     
     
           
-          <div className="gap-4 mb-4 flex flex-col lg:flex-row">
+          <div className="gap-4 flex flex-col lg:flex-row">
             <div className="flex items-center lg:w-1/3 justify-center h-96 lg:w-100 mb-4 rounded bg-gray-50 dark:bg-gray-800">
             <FinancePieChart/>
           </div>

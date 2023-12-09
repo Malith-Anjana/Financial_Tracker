@@ -1,3 +1,4 @@
+import React from "react"
 import ExpensesCard from "../components/Card/ExpensesCard"
 
 const ExpensesList = () => {

@@ -1,10 +1,9 @@
-import expenseCategories from "../../constant/expenseCategories"
 import React from "react";
 const LastTransactions = () => {
   return (
    <>
   
-<ul className="w-[100%] divide-y divide-gray-200 dark:divide-gray-700">
+{/* <ul className="w-[100%] divide-y divide-gray-200 dark:divide-gray-700">
 <div className='text-center flex-row'>
 <strong className="text-gray-900 dark:text-white font-medium">Last Transactions</strong>
 </div>
@@ -29,7 +28,7 @@ const LastTransactions = () => {
    </li>
 
    ))}
-</ul>
+</ul> */}
 
 </>
   )

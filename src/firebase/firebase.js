@@ -1,5 +1,7 @@
 import { initializeApp } from "firebase/app";
 import { getAuth} from "firebase/auth";
+import { getFirestore } from "firebase/firestore";
+
 const firebaseConfig = {
   apiKey: process.env.FIREBASE_KEY,
   authDomain: "finance-tracker-e8ed1.firebaseapp.com",
@@ -10,4 +12,6 @@ const firebaseConfig = {
 };
 
 const app = initializeApp(firebaseConfig);
+// Initialize Cloud Firestore and get a reference to the service
+export const db = getFirestore(app);
 export const auth = getAuth();
