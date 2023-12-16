@@ -16,7 +16,7 @@ const IncomeCard = ({data, total}) => {
 				<div className="text-center">
 					<span className="text-xl text-gray-600 dark:text-gray-300 font-light">{category}</span>
 					<div className="items-center">
-						<strong className="text-3xl dark:text-white text-slate-950 font-semibold">${data[category].totalAmount}</strong>
+						<strong className="text-3xl dark:text-white text-slate-950 font-semibold">${data[category].total}</strong>
 					</div>
 				</div>
 			</BoxWrapper>

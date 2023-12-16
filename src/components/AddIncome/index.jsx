@@ -1,15 +1,9 @@
 import React, { useContext, useEffect, useState } from "react";
 import { db } from "../../firebase/firebase";
 import "./style.css";
-import {
-  addDoc,
-  collection,
-  doc,
-  getDoc,
-  serverTimestamp,
-} from "firebase/firestore";
 import { AuthContext } from "../../context/AuthContext";
-import { ToastError, ToastLoading, ToastSuccess } from "../../constant/toasts";
+import useData from "../../hooks/useData";
+
 
 
 const AddIncome = ({ isOpen, onClose }) => {
@@ -20,32 +14,18 @@ const AddIncome = ({ isOpen, onClose }) => {
   const [remark, setRemark] = useState("");
   const [date, setDate] = useState("");
   const [amount, setAmount] = useState(0);
-  const [isLoading, setIsLoading] = useState(false);
 
-  
+  const { data, error, isLoading, message, postData, fetchData } = useData();
+
+
     const getCategories = async () => {
-      try {
-        const docRef = doc(
-          db,
-          selectedType === "Income"
-            ? "IncomeCategories"
-            : selectedType === "Expense"
-            ? "ExpenseCategories": "test",
-          "categories"
-        );
-        const docSnap = await getDoc(docRef);
-    
-        if (docSnap.exists()) {
-          const cl = docSnap.data();
-          const catList = Object.keys(cl).map((attribute) => cl[attribute]);
-          setRecategories(catList);
-        } else {
-          
-        }
-      } catch (error) {
-        ToastError("Something went Wrong, Try again!");
-      }
-    
+      fetchData("/categories")
+      let configData = ""
+      selectedType === "Income"? configData = data.categories.Income:
+      selectedType === "Expense"? configData = data.categories.Expense:
+      selectedType === "Loan"? configData = data.categories.Income:""
+
+          setRecategories(configData);  
   };
 
 
@@ -59,28 +39,13 @@ const AddIncome = ({ isOpen, onClose }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setIsLoading(true)
-
-
-    try {
-
-      await addDoc(collection(db, selectedType), {
-        transactionType: selectedType,
-        userId: currentUser.uid,
-        remark: remark,
-        amount:amount,
-        category: category,
-        date: date,
-        timeStanmp: serverTimestamp(),
-      });
-      setIsLoading(false);
-      ToastSuccess("Data Added Successfully");
-      // onClose();
-      
-    } catch (error) {
-      ToastError("Something went Wrong, Try again!");
-    } finally {
-    }
+    const reqBody = {selectedType, remark, date, amount, category}
+    await postData('/transaction', reqBody)
+    setAmount(0);
+    setSelectedType("");
+    setCategory("");
+    setRemark("");
+    setDate("");
   };
 
   return (
@@ -175,7 +140,7 @@ const AddIncome = ({ isOpen, onClose }) => {
                     <input
                       required
                       min="1" step="any"
-                      datepicker
+                      value={amount}
                       onChange={(e) => setAmount((Math.round(parseFloat(e.target.value) * 100) / 100).toFixed(2))}
                       type="number"
                       className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full ps-10 p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
@@ -191,7 +156,7 @@ const AddIncome = ({ isOpen, onClose }) => {
                     </label>
                     <input
                       required
-                      datepicker
+                      value={date}
                       onChange={(e) => setDate(e.target.value)}
                       type="date"
                       className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full ps-10 p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
@@ -209,6 +174,7 @@ const AddIncome = ({ isOpen, onClose }) => {
                     <textarea
                       id="remark"
                       required
+                      value={remark}
                       rows="4"
                       className="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-gray-500 focus:border-gray-500 dark:bg-gray-700 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                       placeholder="Write product description here"

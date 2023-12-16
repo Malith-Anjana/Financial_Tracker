@@ -1,19 +1,18 @@
 import React, { useContext, useEffect, useState } from "react";
 import IncomeCard from "../components/Card/IncomeCard";
-import { collection, onSnapshot, query, where } from "firebase/firestore";
-import { db } from "../firebase/firebase";
-import { ToastError } from "../constant/toasts";
 import { RiDeleteBin6Fill } from "react-icons/ri";
 import { DateFilterContext } from "../context/DateFilterContext";
+import useData from "../hooks/useData";
+import { AuthContext } from "../context/AuthContext";
 
 const IncomeLists = () => {
-  const [data, setData] = useState([]);
   const [categoryData, setCategoryData] = useState();
   const [grossTotal, setGrossTotal] = useState(0);
-  const [isLoading, setIsLoading] = useState(false);
-  const [searchQuery, setSearchQuery] = useState('');
+  const [searchQuery, setSearchQuery] = useState("");
 
+  const { currentUser } = useContext(AuthContext);
   const { date } = useContext(DateFilterContext);
+  const { data, error, isLoading, fetchData } = useData();
 
   function formatDate(string) {
     let options = { year: "numeric", month: "long", day: "numeric" };
@@ -21,99 +20,92 @@ const IncomeLists = () => {
   }
 
   useEffect(() => {
-    getData();
+    fetchData(`/transactions?type=${"income"}&date${toString(date)}`);
   }, [date, searchQuery]);
 
-  const configData = (datas) => {
-    const organizedData = datas.reduce((acc, item) => {
-      const { category, amount } = item;
-      acc[category] = acc[category] || { totalAmount: 0.0, items: [] };
-      let total = Math.round(parseFloat(acc[category].totalAmount) * 100) / 100;
-      let am = Math.round(parseFloat(amount) * 100) / 100;
-      acc[category].totalAmount = total + am;
-      acc[category].items.push(item);
-      return acc;
+  
+  useEffect(() => {
+    configData();
+  }, [isLoading, searchQuery]);
+  
+  const configData = () => {
+    // Grouping by category and calculating the sum for each category
+    const groupedByCategory = data.reduce((accumulator, currentItem) => {
+      const category = currentItem.category;
+      const amount = parseFloat(currentItem.amount);
+
+      if (!accumulator[category]) {
+        accumulator[category] = { total: 0, items: [] };
+      }
+
+      accumulator[category].total += amount;
+      accumulator[category].items.push({ amount, category });
+
+      return accumulator;
     }, {});
 
-    // Calculate total amount
-    const totalAmount = datas.reduce(
-      (total, item) => parseFloat(total) + parseFloat(item.amount),
+    // Calculating the overall total
+    const overallTotal = Object.values(groupedByCategory).reduce(
+      (total, category) => total + category.total,
       0
     );
-
-    setCategoryData(organizedData);
-    setGrossTotal(totalAmount);
-  };
-
-
-  const getData = async () => {
-    setIsLoading(true);
-    try {
-        console.log(date);
-      const q = query(collection(db, "Income")
-    ,where('date', '>=', `${date.year}-${date.month.toString().padStart(2, '0')}-01`)
-    ,where('date', '<=', `${date.year}-${date.month.toString().padStart(2, '0')}-31`)
-      );
-  
-
-      onSnapshot(q, (querySnapshot) => {
-        const datas = [];
-        querySnapshot.forEach((doc) => {
-          datas.push(doc.data());
-        });
-
-
-         // Function to filter the array based on the search query
-         const filteredData = datas.filter(item => {
-            // Adjust the conditions based on your search requirements
-            return (
-        
-                    item.transactionType.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                    item.amount.toString().includes(searchQuery) ||
-                    item.category.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                    item.remark.toLowerCase().includes(searchQuery.toLowerCase())
-        
-            );
-          });
-
-        searchQuery===""? setData(datas) : setData(filteredData);
-        
-        configData(datas);
-        setIsLoading(false);
-      });
-    } catch (error) {
-      isLoading(false);
-      ToastError("Something went Wrong, Try again!");
-    }
+    setCategoryData(groupedByCategory);
+    setGrossTotal(overallTotal);
   };
 
   const deleteDialogBox = () => {
     return (
-        <div id="alert-additional-content-2" class="p-4 mb-4 text-red-800 border border-red-300 rounded-lg bg-red-50 dark:bg-gray-800 dark:text-red-400 dark:border-red-800" role="alert">
-  <div class="flex items-center">
-    <svg class="flex-shrink-0 w-4 h-4 me-2" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
-      <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5ZM9.5 4a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM12 15H8a1 1 0 0 1 0-2h1v-3H8a1 1 0 0 1 0-2h2a1 1 0 0 1 1 1v4h1a1 1 0 0 1 0 2Z"/>
-    </svg>
-    <span class="sr-only">Info</span>
-    <h3 class="text-lg font-medium">This is a danger alert</h3>
-  </div>
-  <div class="mt-2 mb-4 text-sm">
-    More info about this info danger goes here. This example text is going to run a bit longer so that you can see how spacing within an alert works with this kind of content.
-  </div>
-  <div class="flex">
-    <button type="button" class="text-white bg-red-800 hover:bg-red-900 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-xs px-3 py-1.5 me-2 text-center inline-flex items-center dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-800">
-      <svg class="me-2 h-3 w-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 14">
-        <path d="M10 0C4.612 0 0 5.336 0 7c0 1.742 3.546 7 10 7 6.454 0 10-5.258 10-7 0-1.664-4.612-7-10-7Zm0 10a3 3 0 1 1 0-6 3 3 0 0 1 0 6Z"/>
-      </svg>
-      View more
-    </button>
-    <button type="button" class="text-red-800 bg-transparent border border-red-800 hover:bg-red-900 hover:text-white focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-xs px-3 py-1.5 text-center dark:hover:bg-red-600 dark:border-red-600 dark:text-red-500 dark:hover:text-white dark:focus:ring-red-800" data-dismiss-target="#alert-additional-content-2" aria-label="Close">
-      Dismiss
-    </button>
-  </div>
-</div>
-    )
-  }
+      <div
+        id="alert-additional-content-2"
+        class="p-4 mb-4 text-red-800 border border-red-300 rounded-lg bg-red-50 dark:bg-gray-800 dark:text-red-400 dark:border-red-800"
+        role="alert"
+      >
+        <div class="flex items-center">
+          <svg
+            class="flex-shrink-0 w-4 h-4 me-2"
+            aria-hidden="true"
+            xmlns="http://www.w3.org/2000/svg"
+            fill="currentColor"
+            viewBox="0 0 20 20"
+          >
+            <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5ZM9.5 4a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM12 15H8a1 1 0 0 1 0-2h1v-3H8a1 1 0 0 1 0-2h2a1 1 0 0 1 1 1v4h1a1 1 0 0 1 0 2Z" />
+          </svg>
+          <span class="sr-only">Info</span>
+          <h3 class="text-lg font-medium">This is a danger alert</h3>
+        </div>
+        <div class="mt-2 mb-4 text-sm">
+          More info about this info danger goes here. This example text is going
+          to run a bit longer so that you can see how spacing within an alert
+          works with this kind of content.
+        </div>
+        <div class="flex">
+          <button
+            type="button"
+            class="text-white bg-red-800 hover:bg-red-900 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-xs px-3 py-1.5 me-2 text-center inline-flex items-center dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-800"
+          >
+            <svg
+              class="me-2 h-3 w-3"
+              aria-hidden="true"
+              xmlns="http://www.w3.org/2000/svg"
+              fill="currentColor"
+              viewBox="0 0 20 14"
+            >
+              <path d="M10 0C4.612 0 0 5.336 0 7c0 1.742 3.546 7 10 7 6.454 0 10-5.258 10-7 0-1.664-4.612-7-10-7Zm0 10a3 3 0 1 1 0-6 3 3 0 0 1 0 6Z" />
+            </svg>
+            View more
+          </button>
+          <button
+            type="button"
+            class="text-red-800 bg-transparent border border-red-800 hover:bg-red-900 hover:text-white focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-xs px-3 py-1.5 text-center dark:hover:bg-red-600 dark:border-red-600 dark:text-red-500 dark:hover:text-white dark:focus:ring-red-800"
+            data-dismiss-target="#alert-additional-content-2"
+            aria-label="Close"
+          >
+            Dismiss
+          </button>
+        </div>
+      </div>
+    );
+  };
 
   return (
     <div className="p-4 sm:ml-64">
@@ -126,18 +118,48 @@ const IncomeLists = () => {
           <div className="bg-gray-50 dark:bg-gray-950 relative shadow-md sm:rounded-lg overflow-hidden">
             <div className="flex flex-col md:flex-row items-center justify-between space-y-3 md:space-y-0 md:space-x-4 p-4">
               <div className="w-full md:w-1/2">
-              <form>   
-    <label for="default-search" class="mb-2 text-sm font-medium text-gray-900 sr-only dark:text-white">Search</label>
-    <div class="relative">
-        <div class="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
-            <svg class="w-4 h-4 text-gray-500 dark:text-gray-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
-                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z"/>
-            </svg>
-        </div>
-        <input value={searchQuery} onChange={(e)=> setSearchQuery(e.target.value)} type="search" id="default-search" class="block w-full p-4 ps-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-primary-100 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-100 dark:focus:border-primary-100" placeholder="Search Keywords" required/>
-        <button onClick={()=> setSearchQuery("")} className="text-white absolute end-2.5 bottom-2.5 bg-primary-100 hover:bg-gray-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2 dark:bg-primary-100 dark:hover:bg-gray-800 dark:focus:ring-primary-100">Clear</button>
-    </div>
-</form>
+                <form>
+                  <label
+                    for="default-search"
+                    class="mb-2 text-sm font-medium text-gray-900 sr-only dark:text-white"
+                  >
+                    Search
+                  </label>
+                  <div class="relative">
+                    <div class="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
+                      <svg
+                        class="w-4 h-4 text-gray-500 dark:text-gray-400"
+                        aria-hidden="true"
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 20 20"
+                      >
+                        <path
+                          stroke="currentColor"
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          stroke-width="2"
+                          d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z"
+                        />
+                      </svg>
+                    </div>
+                    <input
+                      value={searchQuery}
+                      onChange={(e) => setSearchQuery(e.target.value)}
+                      type="search"
+                      id="default-search"
+                      class="block w-full p-4 ps-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-primary-100 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-100 dark:focus:border-primary-100"
+                      placeholder="Search Keywords"
+                      required
+                    />
+                    <button
+                      onClick={() => setSearchQuery("")}
+                      className="text-white absolute end-2.5 bottom-2.5 bg-primary-100 hover:bg-gray-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2 dark:bg-primary-100 dark:hover:bg-gray-800 dark:focus:ring-primary-100"
+                    >
+                      Clear
+                    </button>
+                  </div>
+                </form>
               </div>
               <div className="w-full md:w-auto flex flex-col md:flex-row space-y-2 md:space-y-0 items-stretch md:items-center justify-end md:space-x-3 flex-shrink-0"></div>
             </div>
@@ -200,7 +222,12 @@ const IncomeLists = () => {
                             ${d.amount}
                           </td>
                           <td className="px-4 py-3">{formatDate(d.date)}</td>
-                          <td className="py-3"><RiDeleteBin6Fill onClick={()=> deleteDialogBox()} className="hover:text-primary-100 text-lg cursor-pointer"/></td>
+                          <td className="py-3">
+                            <RiDeleteBin6Fill
+                              onClick={() => deleteDialogBox()}
+                              className="hover:text-primary-100 text-lg cursor-pointer"
+                            />
+                          </td>
                         </tr>
                       ))
                     ) : (
