@@ -1,9 +1,5 @@
 import React from "react";
 const IncomeCard = ({data, total}) => {
-	console.log(data);
-    // const data = categoryData.data;
-	console.log(total);
-
   function BoxWrapper({ children }) {
     return <div className="rounded-md p-4 flex-1 items-center flex justify-center lg:h-26 sm:h-24  bg-gray-50 dark:bg-gray-950">{children}</div>
 }

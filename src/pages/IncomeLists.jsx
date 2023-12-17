@@ -9,6 +9,7 @@ const IncomeLists = () => {
   const [categoryData, setCategoryData] = useState();
   const [grossTotal, setGrossTotal] = useState(0);
   const [searchQuery, setSearchQuery] = useState("");
+  const [filteredData, setFilteredData] = useState([]);
 
   const { currentUser } = useContext(AuthContext);
   const { date } = useContext(DateFilterContext);
@@ -21,16 +22,39 @@ const IncomeLists = () => {
 
   useEffect(() => {
     fetchData(`/transactions?type=${"income"}&date${toString(date)}`);
-  }, [date, searchQuery]);
+  }, [date]);
 
-  
   useEffect(() => {
     configData();
-  }, [isLoading, searchQuery]);
+  }, [isLoading,date, searchQuery,data]);
   
+  useEffect(() => {
+    // Set filteredData to the initial value of data on component mount
+    setFilteredData(data);
+  }, [data]);
+
+  // Function to find any object based on the search query
+  const handleSearch = (query) => {
+    const lowercasedQuery = query.toLowerCase();
+    const filtered = data.filter((item) =>
+      Object.values(item).some((value) =>
+        String(value).toLowerCase().includes(lowercasedQuery)
+      )
+    );
+    setFilteredData(filtered);
+  };
+
+  const handleChange = (e) => {
+    const query = e.target.value;
+    setSearchQuery(query);
+    handleSearch(query);
+  };
+
+
+
   const configData = () => {
     // Grouping by category and calculating the sum for each category
-    const groupedByCategory = data.reduce((accumulator, currentItem) => {
+    const groupedByCategory = filteredData.reduce((accumulator, currentItem) => {
       const category = currentItem.category;
       const amount = parseFloat(currentItem.amount);
 
@@ -145,7 +169,7 @@ const IncomeLists = () => {
                     </div>
                     <input
                       value={searchQuery}
-                      onChange={(e) => setSearchQuery(e.target.value)}
+                      onChange={handleChange}
                       type="search"
                       id="default-search"
                       class="block w-full p-4 ps-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-primary-100 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-100 dark:focus:border-primary-100"
@@ -208,8 +232,8 @@ const IncomeLists = () => {
                   </div>
                 ) : (
                   <tbody className="overflow-y-scroll w-full">
-                    {data ? (
-                      data.map((d) => (
+                    {filteredData ? (
+                      filteredData.map((d) => (
                         <tr className="border-b dark:border-gray-700">
                           <th
                             scope="row"
