@@ -20,11 +20,10 @@ const AddIncome = ({ isOpen, onClose }) => {
 
     const getCategories = async () => {
       fetchData("/categories")
-      let configData = ""
-      selectedType === "Income"? configData = data.categories.Income:
-      selectedType === "Expense"? configData = data.categories.Expense:
-      selectedType === "Loan"? configData = data.categories.Income:""
-
+      let configData = []
+      selectedType === "Income"? configData = data.Income:
+      selectedType === "Expense"? configData = data.Expense:
+      selectedType === "Loan"? configData = data.Loan:""
           setRecategories(configData);  
   };
 
@@ -40,7 +39,7 @@ const AddIncome = ({ isOpen, onClose }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     const reqBody = {selectedType, remark, date, amount, category}
-    await postData('/transaction', reqBody)
+    await postData('/transactions', reqBody)
     setAmount(0);
     setSelectedType("");
     setCategory("");

@@ -38,13 +38,11 @@ const useData = () => {
       .then((res) => {
         ToastSuccess(res.data.message);
         setIsLoading(false);
-        console.log(res.data);
-
       })
       .catch((err) => {
         if (err instanceof CanceledError) return;
         setError(err.message);
-        ToastError(res.data.message)
+        ToastError(err.message)
         setIsLoading(false);
       });
 

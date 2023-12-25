@@ -58,7 +58,7 @@ const IncomeLists = () => {
       const amount = parseFloat(currentItem.amount);
 
       if (!accumulator[category]) {
-        accumulator[category] = { total: 0, items: [] };
+        accumulator[category] = { total: 0.00, items: [] };
       }
 
       accumulator[category].total += amount;
@@ -67,13 +67,14 @@ const IncomeLists = () => {
       return accumulator;
     }, {});
 
-    // Calculating the overall total
-    const overallTotal = Object.values(groupedByCategory).reduce(
-      (total, category) => total + category.total,
-      0
-    );
-    setCategoryData(groupedByCategory);
-    setGrossTotal(overallTotal);
+    // Convert string totals to numbers
+    const numericItems = setData.map(item => ({ ...item, total: parseFloat(item.amount) }));
+
+    // Calculate net total
+   const netTotal = numericItems.reduce((acc, item) => acc + item.total, 0);
+   const fixedTotal = parseFloat(netTotal);
+   setCategoryData(groupedByCategory);
+    setGrossTotal(fixedTotal);
   };
 
   const TableBody = () => {
