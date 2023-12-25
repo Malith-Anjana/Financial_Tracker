@@ -49,7 +49,7 @@ const MonthCalendar = () => {
 
   const getCurrentMonth = () => {
     const currentYear = new Date().getFullYear();
-    const yearOptions = Array.from({ length: 10 }, (_, i) => currentYear + i);
+    const yearOptions = Array.from({ length: 20 }, (_, i) => currentYear - i);
     setYears(yearOptions);
     setSelectedYear(currentYear.toString()); // Set default to current year
   };

@@ -21,17 +21,15 @@ const IncomeLists = () => {
   }
 
   useEffect(() => {
-    fetchData(`/transactions?type=${"income"}&date${toString(date)}`);
+    fetchData(`/transactions?type=${"income"}&date=${date.year}-${date.month}`);
   }, [date]);
 
   useEffect(() => {
+
     configData();
-  }, [isLoading,date, searchQuery,data]);
-  
-  useEffect(() => {
-    // Set filteredData to the initial value of data on component mount
-    setFilteredData(data);
-  }, [data]);
+  }, [date, isLoading,searchQuery,data]);
+
+
 
   // Function to find any object based on the search query
   const handleSearch = (query) => {
@@ -54,7 +52,8 @@ const IncomeLists = () => {
 
   const configData = () => {
     // Grouping by category and calculating the sum for each category
-    const groupedByCategory = filteredData.reduce((accumulator, currentItem) => {
+    const setData = searchQuery? filteredData : data
+    const groupedByCategory = setData.reduce((accumulator, currentItem) => {
       const category = currentItem.category;
       const amount = parseFloat(currentItem.amount);
 
@@ -77,16 +76,66 @@ const IncomeLists = () => {
     setGrossTotal(overallTotal);
   };
 
+  const TableBody = () => {
+    const setData = searchQuery? filteredData : data
+    return (
+      <tbody className="overflow-y-scroll w-full">
+                    {data || filteredData ? (
+                       setData.map((d, index) => (
+                        <tr className="border-b dark:border-gray-700" key={index}>
+                          <th
+                            scope="row"
+                            className="px-4 py-3 font-medium text-gray-900 whitespace-nowrap dark:text-white"
+                          >
+                            {d.category}
+                          </th>
+                          <td className="px-4 py-3">{d.remark}</td>
+                          <td className="px-4 py-3  text-gray-900 dark:text-white">
+                            ${d.amount}
+                          </td>
+                          <td className="px-4 py-3">{formatDate(d.date)}</td>
+                          <td className="py-3">
+                            <RiDeleteBin6Fill
+                              onClick={() => deleteDialogBox()}
+                              className="hover:text-primary-100 text-lg cursor-pointer"
+                            />
+                          </td>
+                        </tr>
+                      ))
+                    ) : (
+                      <div
+                        className="flex items-center p-4 m-4 text-sm text-yellow-800 border border-yellow-300 rounded-lg bg-yellow-50 dark:bg-gray-800 dark:text-yellow-300 dark:border-yellow-800"
+                        role="alert"
+                      >
+                        <svg
+                          className="flex-shrink-0 inline w-4 h-4 me-3"
+                          aria-hidden="true"
+                          xmlns="http://www.w3.org/2000/svg"
+                          fill="currentColor"
+                          viewBox="0 0 20 20"
+                        >
+                          <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5ZM9.5 4a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM12 15H8a1 1 0 0 1 0-2h1v-3H8a1 1 0 0 1 0-2h2a1 1 0 0 1 1 1v4h1a1 1 0 0 1 0 2Z" />
+                        </svg>
+                        <span className="sr-only">Prompt!</span>
+                        <div>
+                          <span className="font-medium">No Data Available</span>
+                        </div>
+                      </div>
+                    )}
+                  </tbody>
+    )
+  }
+
   const deleteDialogBox = () => {
     return (
       <div
         id="alert-additional-content-2"
-        class="p-4 mb-4 text-red-800 border border-red-300 rounded-lg bg-red-50 dark:bg-gray-800 dark:text-red-400 dark:border-red-800"
+        className="p-4 mb-4 text-red-800 border border-red-300 rounded-lg bg-red-50 dark:bg-gray-800 dark:text-red-400 dark:border-red-800"
         role="alert"
       >
-        <div class="flex items-center">
+        <div className="flex items-center">
           <svg
-            class="flex-shrink-0 w-4 h-4 me-2"
+            className="flex-shrink-0 w-4 h-4 me-2"
             aria-hidden="true"
             xmlns="http://www.w3.org/2000/svg"
             fill="currentColor"
@@ -94,21 +143,21 @@ const IncomeLists = () => {
           >
             <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5ZM9.5 4a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM12 15H8a1 1 0 0 1 0-2h1v-3H8a1 1 0 0 1 0-2h2a1 1 0 0 1 1 1v4h1a1 1 0 0 1 0 2Z" />
           </svg>
-          <span class="sr-only">Info</span>
-          <h3 class="text-lg font-medium">This is a danger alert</h3>
+          <span className="sr-only">Info</span>
+          <h3 className="text-lg font-medium">This is a danger alert</h3>
         </div>
-        <div class="mt-2 mb-4 text-sm">
+        <div className="mt-2 mb-4 text-sm">
           More info about this info danger goes here. This example text is going
           to run a bit longer so that you can see how spacing within an alert
           works with this kind of content.
         </div>
-        <div class="flex">
+        <div className="flex">
           <button
             type="button"
-            class="text-white bg-red-800 hover:bg-red-900 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-xs px-3 py-1.5 me-2 text-center inline-flex items-center dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-800"
+            className="text-white bg-red-800 hover:bg-red-900 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-xs px-3 py-1.5 me-2 text-center inline-flex items-center dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-800"
           >
             <svg
-              class="me-2 h-3 w-3"
+              className="me-2 h-3 w-3"
               aria-hidden="true"
               xmlns="http://www.w3.org/2000/svg"
               fill="currentColor"
@@ -120,7 +169,7 @@ const IncomeLists = () => {
           </button>
           <button
             type="button"
-            class="text-red-800 bg-transparent border border-red-800 hover:bg-red-900 hover:text-white focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-xs px-3 py-1.5 text-center dark:hover:bg-red-600 dark:border-red-600 dark:text-red-500 dark:hover:text-white dark:focus:ring-red-800"
+            className="text-red-800 bg-transparent border border-red-800 hover:bg-red-900 hover:text-white focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-xs px-3 py-1.5 text-center dark:hover:bg-red-600 dark:border-red-600 dark:text-red-500 dark:hover:text-white dark:focus:ring-red-800"
             data-dismiss-target="#alert-additional-content-2"
             aria-label="Close"
           >
@@ -144,15 +193,15 @@ const IncomeLists = () => {
               <div className="w-full md:w-1/2">
                 <form>
                   <label
-                    for="default-search"
-                    class="mb-2 text-sm font-medium text-gray-900 sr-only dark:text-white"
+                    htmlFor="default-search"
+                    className="mb-2 text-sm font-medium text-gray-900 sr-only dark:text-white"
                   >
                     Search
                   </label>
-                  <div class="relative">
-                    <div class="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
+                  <div className="relative">
+                    <div className="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
                       <svg
-                        class="w-4 h-4 text-gray-500 dark:text-gray-400"
+                        className="w-4 h-4 text-gray-500 dark:text-gray-400"
                         aria-hidden="true"
                         xmlns="http://www.w3.org/2000/svg"
                         fill="none"
@@ -172,7 +221,7 @@ const IncomeLists = () => {
                       onChange={handleChange}
                       type="search"
                       id="default-search"
-                      class="block w-full p-4 ps-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-primary-100 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-100 dark:focus:border-primary-100"
+                      className="block w-full p-4 ps-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-primary-100 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-100 dark:focus:border-primary-100"
                       placeholder="Search Keywords"
                       required
                     />
@@ -209,11 +258,11 @@ const IncomeLists = () => {
                   </tr>
                 </thead>
                 {isLoading ? (
-                  <div class="w-full m-6">
+                  <div className="w-full m-6">
                     <div role="status">
                       <svg
                         aria-hidden="true"
-                        class="inline w-8 h-8 text-gray-200 animate-spin dark:text-gray-600 fill-primary-100"
+                        className="inline w-8 h-8 text-gray-200 animate-spin dark:text-gray-600 fill-primary-100"
                         viewBox="0 0 100 101"
                         fill="none"
                         xmlns="http://www.w3.org/2000/svg"
@@ -227,54 +276,11 @@ const IncomeLists = () => {
                           fill="currentFill"
                         />
                       </svg>
-                      <span class="sr-only">Loading...</span>
+                      <span className="sr-only">Loading...</span>
                     </div>
                   </div>
                 ) : (
-                  <tbody className="overflow-y-scroll w-full">
-                    {filteredData ? (
-                      filteredData.map((d) => (
-                        <tr className="border-b dark:border-gray-700">
-                          <th
-                            scope="row"
-                            className="px-4 py-3 font-medium text-gray-900 whitespace-nowrap dark:text-white"
-                          >
-                            {d.category}
-                          </th>
-                          <td className="px-4 py-3">{d.remark}</td>
-                          <td className="px-4 py-3  text-gray-900 dark:text-white">
-                            ${d.amount}
-                          </td>
-                          <td className="px-4 py-3">{formatDate(d.date)}</td>
-                          <td className="py-3">
-                            <RiDeleteBin6Fill
-                              onClick={() => deleteDialogBox()}
-                              className="hover:text-primary-100 text-lg cursor-pointer"
-                            />
-                          </td>
-                        </tr>
-                      ))
-                    ) : (
-                      <div
-                        class="flex items-center p-4 m-4 text-sm text-yellow-800 border border-yellow-300 rounded-lg bg-yellow-50 dark:bg-gray-800 dark:text-yellow-300 dark:border-yellow-800"
-                        role="alert"
-                      >
-                        <svg
-                          class="flex-shrink-0 inline w-4 h-4 me-3"
-                          aria-hidden="true"
-                          xmlns="http://www.w3.org/2000/svg"
-                          fill="currentColor"
-                          viewBox="0 0 20 20"
-                        >
-                          <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5ZM9.5 4a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM12 15H8a1 1 0 0 1 0-2h1v-3H8a1 1 0 0 1 0-2h2a1 1 0 0 1 1 1v4h1a1 1 0 0 1 0 2Z" />
-                        </svg>
-                        <span class="sr-only">Prompt!</span>
-                        <div>
-                          <span class="font-medium">No Data Available</span>
-                        </div>
-                      </div>
-                    )}
-                  </tbody>
+                  <TableBody/>
                 )}
               </table>
             </div>
